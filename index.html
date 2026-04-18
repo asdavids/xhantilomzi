@@ -108,10 +108,20 @@
   .hero-bg {
     position: absolute;
     inset: 0;
+    background-image: url('cover.jpg');
+    background-size: cover;
+    background-position: center 20%;
+    filter: brightness(0.65) contrast(1.08) saturate(0.9);
+  }
+
+  .hero-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
     background:
-      radial-gradient(ellipse at 60% 40%, rgba(139,42,26,0.25) 0%, transparent 55%),
-      radial-gradient(ellipse at 20% 80%, rgba(201,168,76,0.12) 0%, transparent 45%),
-      linear-gradient(160deg, #1A1008 0%, #2A1F14 40%, #1C120A 100%);
+      radial-gradient(ellipse at 60% 40%, rgba(139,42,26,0.2) 0%, transparent 55%),
+      linear-gradient(to top, rgba(26,16,8,0.95) 0%, rgba(26,16,8,0.3) 50%, transparent 100%),
+      linear-gradient(to bottom, rgba(26,16,8,0.6) 0%, transparent 30%);
   }
 
   .hero-lines {
@@ -253,42 +263,45 @@
 
   .album-cover-placeholder {
     aspect-ratio: 1;
-    background: linear-gradient(135deg, #1A1008, #3D2B1A, #1C120A);
-    border: 0.5px solid rgba(201,168,76,0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 1rem;
     position: relative;
     overflow: hidden;
+    border: 0.5px solid rgba(201,168,76,0.2);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(201,168,76,0.08);
   }
 
-  .album-cover-placeholder::before {
-    content: '';
+  .album-cover-placeholder img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 15%;
+    display: block;
+  }
+
+  .album-cover-placeholder .cover-overlay {
     position: absolute;
     inset: 0;
-    background: radial-gradient(ellipse at 50% 40%, rgba(139,42,26,0.3) 0%, transparent 60%);
+    background: linear-gradient(to top, rgba(10,5,2,0.7) 0%, transparent 50%);
+    display: flex;
+    align-items: flex-end;
+    padding: 1.5rem;
   }
 
   .cover-text {
-    position: relative;
-    z-index: 1;
-    text-align: center;
+    text-align: left;
   }
 
   .cover-text .artist {
     font-family: 'DM Sans', sans-serif;
-    font-size: 0.65rem;
-    letter-spacing: 0.4em;
+    font-size: 0.6rem;
+    letter-spacing: 0.35em;
     text-transform: uppercase;
-    color: rgba(201,168,76,0.7);
-    margin-bottom: 0.5rem;
+    color: rgba(201,168,76,0.8);
+    margin-bottom: 0.3rem;
   }
 
   .cover-text .title {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 3.5rem;
+    font-size: 2.2rem;
     line-height: 0.95;
     color: var(--cream);
   }
@@ -296,16 +309,16 @@
   .cover-text .meaning {
     font-family: 'Cormorant Garamond', serif;
     font-style: italic;
-    font-size: 0.85rem;
-    color: rgba(184,168,152,0.6);
-    margin-top: 0.4rem;
+    font-size: 0.78rem;
+    color: rgba(184,168,152,0.7);
+    margin-top: 0.3rem;
   }
 
   .cover-rule {
-    width: 40%;
+    width: 30%;
     height: 0.5px;
-    background: rgba(201,168,76,0.3);
-    margin: 0.8rem auto;
+    background: rgba(201,168,76,0.4);
+    margin: 0.5rem 0;
   }
 
   .album-info h2 {
@@ -1043,11 +1056,14 @@
 
   <section class="home-album">
     <div class="album-cover-placeholder">
-      <div class="cover-text">
-        <div class="artist">Xhantilomzi</div>
-        <div class="cover-rule"></div>
-        <div class="title">Umoya<br>Wami</div>
-        <div class="meaning">my spirit</div>
+      <img src="cover.jpg" alt="Umoya Wami — Xhantilomzi album cover" />
+      <div class="cover-overlay">
+        <div class="cover-text">
+          <div class="artist">Xhantilomzi</div>
+          <div class="cover-rule"></div>
+          <div class="title">Umoya<br>Wami</div>
+          <div class="meaning">my spirit</div>
+        </div>
       </div>
     </div>
     <div class="album-info">
@@ -1136,6 +1152,13 @@
       <div class="section-rule"></div>
     </div>
     <div class="disco-grid">
+      <div class="disco-item" style="cursor:pointer;" onclick="showPage('music')">
+        <div class="disco-art" style="padding:0;overflow:hidden;">
+          <img src="cover.jpg" alt="Umoya Wami" style="width:100%;height:100%;object-fit:cover;object-position:center 15%;" />
+        </div>
+        <div class="disco-name">Umoya Wami</div>
+        <div class="disco-meta">2025 · Album · 11 tracks</div>
+      </div>
       <div class="disco-item">
         <div class="disco-art">EP</div>
         <div class="disco-name">Amanzi EP</div>
