@@ -1,0 +1,1455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Xhantilomzi — Umoya Wami</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #E8C97A;
+    --gold-dim: #8A6E2F;
+    --earth: #2A1F14;
+    --earth-mid: #3D2B1A;
+    --earth-light: #5C3D22;
+    --smoke: #B8A898;
+    --smoke-light: #D6CAB8;
+    --cream: #F0E8D8;
+    --ash: #7A6A5A;
+    --red-warm: #8B2A1A;
+    --white: #FAF6F0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--earth);
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* GRAIN OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.35;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 3rem;
+    background: linear-gradient(to bottom, rgba(42,31,20,0.95) 0%, transparent 100%);
+  }
+
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 400;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--smoke);
+    text-decoration: none;
+    transition: color 0.3s;
+    cursor: pointer;
+  }
+
+  .nav-links a:hover, .nav-links a.active { color: var(--gold-light); }
+
+  /* PAGES */
+  .page { display: none; min-height: 100vh; }
+  .page.active { display: block; }
+
+  /* =================== HOME PAGE =================== */
+  #home {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .hero {
+    position: relative;
+    height: 100vh;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 60% 40%, rgba(139,42,26,0.25) 0%, transparent 55%),
+      radial-gradient(ellipse at 20% 80%, rgba(201,168,76,0.12) 0%, transparent 45%),
+      linear-gradient(160deg, #1A1008 0%, #2A1F14 40%, #1C120A 100%);
+  }
+
+  .hero-lines {
+    position: absolute;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(
+        to right,
+        transparent,
+        transparent 79px,
+        rgba(201,168,76,0.04) 79px,
+        rgba(201,168,76,0.04) 80px
+      );
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    padding: 0 3rem 5rem;
+    max-width: 900px;
+  }
+
+  .hero-eyebrow {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.2rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.3s forwards;
+  }
+
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(5rem, 12vw, 11rem);
+    line-height: 0.9;
+    letter-spacing: 0.02em;
+    color: var(--cream);
+    margin-bottom: 0.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.5s forwards;
+  }
+
+  .hero-title span {
+    color: var(--gold);
+    display: block;
+  }
+
+  .hero-subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(1.1rem, 2.5vw, 1.6rem);
+    color: var(--smoke);
+    margin-bottom: 2.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.7s forwards;
+  }
+
+  .hero-ctas {
+    display: flex;
+    gap: 1.2rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.9s forwards;
+  }
+
+  .btn-primary {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 0.85rem 2rem;
+    background: var(--gold);
+    color: var(--earth);
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); }
+
+  .btn-secondary {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 400;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 0.85rem 2rem;
+    background: transparent;
+    color: var(--smoke-light);
+    border: 0.5px solid rgba(184,168,152,0.4);
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--gold-dim);
+    color: var(--gold-light);
+    transform: translateY(-2px);
+  }
+
+  .hero-scroll {
+    position: absolute;
+    right: 3rem;
+    bottom: 4rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    opacity: 0;
+    animation: fadeIn 1s 1.2s forwards;
+  }
+
+  .hero-scroll span {
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--ash);
+    writing-mode: vertical-rl;
+  }
+
+  .scroll-line {
+    width: 0.5px;
+    height: 60px;
+    background: linear-gradient(to bottom, var(--gold-dim), transparent);
+    animation: scrollPulse 2s infinite;
+  }
+
+  /* ALBUM SECTION ON HOME */
+  .home-album {
+    background: var(--earth-mid);
+    padding: 6rem 3rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: center;
+  }
+
+  .album-cover-placeholder {
+    aspect-ratio: 1;
+    background: linear-gradient(135deg, #1A1008, #3D2B1A, #1C120A);
+    border: 0.5px solid rgba(201,168,76,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 1rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .album-cover-placeholder::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 40%, rgba(139,42,26,0.3) 0%, transparent 60%);
+  }
+
+  .cover-text {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+  }
+
+  .cover-text .artist {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: rgba(201,168,76,0.7);
+    margin-bottom: 0.5rem;
+  }
+
+  .cover-text .title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3.5rem;
+    line-height: 0.95;
+    color: var(--cream);
+  }
+
+  .cover-text .meaning {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.85rem;
+    color: rgba(184,168,152,0.6);
+    margin-top: 0.4rem;
+  }
+
+  .cover-rule {
+    width: 40%;
+    height: 0.5px;
+    background: rgba(201,168,76,0.3);
+    margin: 0.8rem auto;
+  }
+
+  .album-info h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 300;
+    color: var(--cream);
+    margin-bottom: 1rem;
+    line-height: 1.1;
+  }
+
+  .album-info h2 em {
+    color: var(--gold);
+    font-style: italic;
+  }
+
+  .album-meta {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .meta-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ash);
+  }
+
+  .meta-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    color: var(--smoke-light);
+  }
+
+  .album-desc {
+    font-size: 0.9rem;
+    line-height: 1.8;
+    color: var(--smoke);
+    margin-bottom: 2rem;
+    max-width: 480px;
+  }
+
+  /* LATEST section */
+  .home-latest {
+    padding: 5rem 3rem;
+    background: var(--earth);
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .section-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  .section-rule {
+    flex: 1;
+    height: 0.5px;
+    background: rgba(201,168,76,0.2);
+  }
+
+  .latest-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .latest-card {
+    padding: 2rem;
+    border: 0.5px solid rgba(201,168,76,0.15);
+    background: rgba(61,43,26,0.3);
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+
+  .latest-card:hover {
+    border-color: rgba(201,168,76,0.4);
+    background: rgba(61,43,26,0.6);
+    transform: translateY(-3px);
+  }
+
+  .card-type {
+    font-size: 0.62rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    margin-bottom: 0.8rem;
+  }
+
+  .card-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    color: var(--cream);
+    margin-bottom: 0.5rem;
+  }
+
+  .card-sub {
+    font-size: 0.8rem;
+    color: var(--ash);
+    line-height: 1.6;
+  }
+
+  /* QUOTE STRIP */
+  .quote-strip {
+    padding: 4rem 3rem;
+    background: var(--earth-mid);
+    border-top: 0.5px solid rgba(201,168,76,0.1);
+    border-bottom: 0.5px solid rgba(201,168,76,0.1);
+    text-align: center;
+  }
+
+  .quote-strip blockquote {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(1.1rem, 2.5vw, 1.7rem);
+    color: var(--smoke-light);
+    max-width: 750px;
+    margin: 0 auto 1rem;
+    line-height: 1.6;
+  }
+
+  .quote-strip cite {
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    font-style: normal;
+  }
+
+  /* =================== MUSIC PAGE =================== */
+  #music { padding-top: 8rem; min-height: 100vh; }
+
+  .music-hero {
+    padding: 0 3rem 4rem;
+    border-bottom: 0.5px solid rgba(201,168,76,0.1);
+  }
+
+  .page-eyebrow {
+    font-size: 0.65rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1rem;
+  }
+
+  .page-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 8vw, 7rem);
+    line-height: 0.9;
+    color: var(--cream);
+    margin-bottom: 0.5rem;
+  }
+
+  .page-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--smoke);
+  }
+
+  /* TRACKLIST */
+  .tracklist-section { padding: 4rem 3rem; }
+
+  .tracklist-header {
+    display: grid;
+    grid-template-columns: 40px 1fr 120px 80px;
+    gap: 1rem;
+    padding: 0 1rem 1rem;
+    border-bottom: 0.5px solid rgba(201,168,76,0.15);
+    margin-bottom: 0.5rem;
+  }
+
+  .tracklist-header span {
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ash);
+  }
+
+  .track-row {
+    display: grid;
+    grid-template-columns: 40px 1fr 120px 80px;
+    gap: 1rem;
+    padding: 1.1rem 1rem;
+    border-bottom: 0.5px solid rgba(201,168,76,0.06);
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.25s;
+    position: relative;
+  }
+
+  .track-row:hover {
+    background: rgba(201,168,76,0.05);
+    border-bottom-color: rgba(201,168,76,0.15);
+  }
+
+  .track-row.playing {
+    background: rgba(201,168,76,0.08);
+  }
+
+  .track-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.85rem;
+    color: var(--ash);
+    text-align: center;
+  }
+
+  .track-row.playing .track-num { color: var(--gold); }
+
+  .track-info { display: flex; flex-direction: column; gap: 0.2rem; }
+
+  .track-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    color: var(--cream);
+  }
+
+  .track-row.playing .track-name { color: var(--gold-light); }
+
+  .track-lang {
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    color: var(--ash);
+  }
+
+  .track-type {
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ash);
+  }
+
+  .track-duration {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    color: var(--ash);
+    text-align: right;
+  }
+
+  /* PLAYER */
+  .player-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    z-index: 200;
+    background: rgba(26,16,8,0.97);
+    border-top: 0.5px solid rgba(201,168,76,0.2);
+    padding: 1rem 3rem;
+    display: none;
+    align-items: center;
+    gap: 2rem;
+    backdrop-filter: blur(10px);
+  }
+
+  .player-bar.visible { display: flex; }
+
+  .player-track-info { flex: 1; }
+
+  .player-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    color: var(--cream);
+  }
+
+  .player-sub {
+    font-size: 0.7rem;
+    color: var(--ash);
+    letter-spacing: 0.1em;
+  }
+
+  .player-controls {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .play-btn {
+    width: 44px;
+    height: 44px;
+    border: 0.5px solid var(--gold-dim);
+    background: transparent;
+    color: var(--gold);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    transition: all 0.25s;
+  }
+
+  .play-btn:hover {
+    background: rgba(201,168,76,0.1);
+    border-color: var(--gold);
+  }
+
+  .skip-btn {
+    background: none;
+    border: none;
+    color: var(--ash);
+    cursor: pointer;
+    font-size: 1rem;
+    transition: color 0.2s;
+    padding: 0.3rem;
+  }
+
+  .skip-btn:hover { color: var(--smoke-light); }
+
+  .player-progress {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .progress-bar {
+    width: 100%;
+    height: 2px;
+    background: rgba(201,168,76,0.15);
+    position: relative;
+    cursor: pointer;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--gold);
+    width: 0%;
+    transition: width 0.5s linear;
+  }
+
+  .progress-times {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.65rem;
+    color: var(--ash);
+  }
+
+  /* DISCOGRAPHY */
+  .discography-section {
+    padding: 0 3rem 5rem;
+    background: var(--earth-mid);
+  }
+
+  .disco-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+
+  .disco-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    cursor: pointer;
+    transition: transform 0.25s;
+  }
+
+  .disco-item:hover { transform: translateY(-4px); }
+
+  .disco-art {
+    aspect-ratio: 1;
+    background: linear-gradient(135deg, #1A1008, #3D2B1A);
+    border: 0.5px solid rgba(201,168,76,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    color: rgba(201,168,76,0.3);
+    letter-spacing: 0.1em;
+  }
+
+  .disco-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    color: var(--cream);
+  }
+
+  .disco-meta {
+    font-size: 0.72rem;
+    color: var(--ash);
+    letter-spacing: 0.1em;
+  }
+
+  /* =================== ABOUT PAGE =================== */
+  #about { padding-top: 8rem; min-height: 100vh; }
+
+  .about-hero {
+    padding: 0 3rem 5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: start;
+  }
+
+  .about-text-block { }
+
+  .bio-long {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    line-height: 1.9;
+    color: var(--smoke-light);
+    margin-bottom: 2rem;
+  }
+
+  .bio-long p { margin-bottom: 1.2rem; }
+
+  .bio-long p:first-child::first-letter {
+    font-size: 3.5rem;
+    font-weight: 600;
+    float: left;
+    line-height: 0.8;
+    margin-right: 0.1em;
+    margin-top: 0.1em;
+    color: var(--gold);
+  }
+
+  .about-sidebar { }
+
+  .sidebar-block {
+    margin-bottom: 2.5rem;
+    padding-bottom: 2.5rem;
+    border-bottom: 0.5px solid rgba(201,168,76,0.1);
+  }
+
+  .sidebar-block:last-child { border-bottom: none; }
+
+  .sidebar-label {
+    font-size: 0.62rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    margin-bottom: 1rem;
+  }
+
+  .sidebar-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.95rem;
+    color: var(--smoke-light);
+    line-height: 1.8;
+  }
+
+  .influences-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .influence-tag {
+    font-size: 0.72rem;
+    padding: 0.35rem 0.8rem;
+    border: 0.5px solid rgba(201,168,76,0.2);
+    color: var(--smoke);
+    letter-spacing: 0.1em;
+  }
+
+  .shows-list { display: flex; flex-direction: column; gap: 0.6rem; }
+
+  .show-item {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-size: 0.82rem;
+    color: var(--smoke);
+  }
+
+  .show-dot {
+    width: 4px;
+    height: 4px;
+    background: var(--gold-dim);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* SOUND SECTION */
+  .sound-section {
+    padding: 5rem 3rem;
+    background: var(--earth-mid);
+  }
+
+  .sound-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: rgba(201,168,76,0.1);
+    border: 0.5px solid rgba(201,168,76,0.1);
+    margin-top: 3rem;
+  }
+
+  .sound-cell {
+    background: var(--earth-mid);
+    padding: 2rem 1.5rem;
+    transition: background 0.3s;
+  }
+
+  .sound-cell:hover { background: rgba(201,168,76,0.04); }
+
+  .sound-genre {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.05em;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+  }
+
+  .sound-desc {
+    font-size: 0.78rem;
+    color: var(--ash);
+    line-height: 1.7;
+  }
+
+  /* =================== CONTACT PAGE =================== */
+  #contact { padding-top: 8rem; min-height: 100vh; }
+
+  .contact-grid {
+    padding: 2rem 3rem 5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: start;
+  }
+
+  .contact-left h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: 300;
+    color: var(--cream);
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+  }
+
+  .contact-left h2 em { color: var(--gold); font-style: italic; }
+
+  .contact-left p {
+    font-size: 0.88rem;
+    color: var(--smoke);
+    line-height: 1.8;
+    margin-bottom: 2.5rem;
+  }
+
+  .contact-channels { display: flex; flex-direction: column; gap: 1.5rem; }
+
+  .channel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 0.5px solid rgba(201,168,76,0.1);
+  }
+
+  .channel:last-child { border-bottom: none; }
+
+  .channel-label {
+    font-size: 0.62rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+  }
+
+  .channel-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    color: var(--smoke-light);
+  }
+
+  .channel-note {
+    font-size: 0.72rem;
+    color: var(--ash);
+  }
+
+  /* PRESS KIT */
+  .press-kit-box {
+    border: 0.5px solid rgba(201,168,76,0.2);
+    padding: 2.5rem;
+    background: rgba(61,43,26,0.3);
+    margin-bottom: 2rem;
+  }
+
+  .pk-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    letter-spacing: 0.05em;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+  }
+
+  .pk-desc {
+    font-size: 0.82rem;
+    color: var(--smoke);
+    line-height: 1.7;
+    margin-bottom: 1.8rem;
+  }
+
+  .pk-items { display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: 2rem; }
+
+  .pk-item {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-size: 0.8rem;
+    color: var(--smoke-light);
+  }
+
+  .pk-check {
+    width: 16px;
+    height: 16px;
+    border: 0.5px solid var(--gold-dim);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+    color: var(--gold);
+    flex-shrink: 0;
+  }
+
+  .social-row {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .social-link {
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ash);
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border: 0.5px solid rgba(201,168,76,0.15);
+    transition: all 0.25s;
+    cursor: pointer;
+  }
+
+  .social-link:hover {
+    color: var(--gold-light);
+    border-color: rgba(201,168,76,0.4);
+  }
+
+  /* FOOTER */
+  footer {
+    background: #100B05;
+    padding: 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 0.5px solid rgba(201,168,76,0.1);
+  }
+
+  .footer-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    letter-spacing: 0.15em;
+    color: var(--gold-dim);
+  }
+
+  .footer-copy {
+    font-size: 0.7rem;
+    color: var(--ash);
+    letter-spacing: 0.1em;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    nav { padding: 1.2rem 1.5rem; }
+    .nav-links { gap: 1.5rem; }
+    .home-album, .about-hero, .contact-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+    .latest-grid, .disco-grid { grid-template-columns: 1fr 1fr; }
+    .sound-grid { grid-template-columns: 1fr 1fr; }
+    .hero-content { padding: 0 1.5rem 4rem; }
+    .tracklist-header, .track-row { grid-template-columns: 32px 1fr 80px; }
+    .tracklist-header span:nth-child(3), .track-type { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo" onclick="showPage('home')">Xhantilomzi</div>
+  <ul class="nav-links">
+    <li><a href="#" onclick="showPage('home')" id="nav-home" class="active">Home</a></li>
+    <li><a href="#" onclick="showPage('music')" id="nav-music">Music</a></li>
+    <li><a href="#" onclick="showPage('about')" id="nav-about">About</a></li>
+    <li><a href="#" onclick="showPage('contact')" id="nav-contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- =================== HOME =================== -->
+<div id="home" class="page active">
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-lines"></div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">Debut Album · 2025</p>
+      <h1 class="hero-title">Umoya<span>Wami</span></h1>
+      <p class="hero-subtitle">My Spirit — out now on all platforms</p>
+      <div class="hero-ctas">
+        <button class="btn-primary" onclick="showPage('music')">Listen Now</button>
+        <button class="btn-secondary" onclick="showPage('about')">About Xhantilomzi</button>
+      </div>
+    </div>
+    <div class="hero-scroll">
+      <div class="scroll-line"></div>
+      <span>Scroll</span>
+    </div>
+  </section>
+
+  <section class="home-album">
+    <div class="album-cover-placeholder">
+      <div class="cover-text">
+        <div class="artist">Xhantilomzi</div>
+        <div class="cover-rule"></div>
+        <div class="title">Umoya<br>Wami</div>
+        <div class="meaning">my spirit</div>
+      </div>
+    </div>
+    <div class="album-info">
+      <h2>Ten tracks.<br><em>One complete story.</em></h2>
+      <div class="album-meta">
+        <div class="meta-item">
+          <span class="meta-label">Released</span>
+          <span class="meta-value">2025</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Tracks</span>
+          <span class="meta-value">10 + Interlude</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Runtime</span>
+          <span class="meta-value">~52 minutes</span>
+        </div>
+      </div>
+      <p class="album-desc">From the awakening of Vula to the nostalgia of Back in the Days — Umoya Wami moves through love, healing, empowerment, darkness, and gratitude. Amapiano. Afro House. All heart.</p>
+      <button class="btn-primary" onclick="showPage('music')">Full Tracklist</button>
+    </div>
+  </section>
+
+  <section class="home-latest">
+    <div class="section-header">
+      <span class="section-label">From the Album</span>
+      <div class="section-rule"></div>
+    </div>
+    <div class="latest-grid">
+      <div class="latest-card" onclick="playTrack(1)">
+        <div class="card-type">Lead Single</div>
+        <div class="card-title">Amanzi (Water)</div>
+        <div class="card-sub">A song about release. The river carries everything that doesn't belong to you. Zulu / English · 5:02</div>
+      </div>
+      <div class="latest-card" onclick="playTrack(3)">
+        <div class="card-type">Club Banger</div>
+        <div class="card-title">Smoke Signal</div>
+        <div class="card-sub">Heavy log drums, deep bass, and the electricity of a room that already knows. English / Zulu · 5:38</div>
+      </div>
+      <div class="latest-card" onclick="playTrack(9)">
+        <div class="card-type">Collab Single</div>
+        <div class="card-title">Deep Water feat. Langa Sol</div>
+        <div class="card-sub">A duet about choosing to stay under. Two voices, one current. English / Zulu · 5:18</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="quote-strip">
+    <blockquote>"Xhantilomzi doesn't perform Amapiano — she breathes it. Her debut album is the most emotionally intelligent South African house record of the year."</blockquote>
+    <cite>— Rolling Stone Africa, 2025</cite>
+  </div>
+
+  <footer>
+    <div class="footer-logo">Xhantilomzi</div>
+    <div class="footer-copy">© 2025 Xhantilomzi · All rights reserved · booking@xhantilomzimusic.com</div>
+  </footer>
+</div>
+
+<!-- =================== MUSIC =================== -->
+<div id="music" class="page">
+  <section class="music-hero">
+    <p class="page-eyebrow">Discography</p>
+    <h1 class="page-title">Umoya Wami</h1>
+    <p class="page-sub">Amapiano · Afro House · Neo Soul · Deep House</p>
+  </section>
+
+  <section class="tracklist-section">
+    <div class="section-header">
+      <span class="section-label">Full Tracklist</span>
+      <div class="section-rule"></div>
+    </div>
+
+    <div class="tracklist-header">
+      <span>#</span>
+      <span>Title</span>
+      <span>Type</span>
+      <span style="text-align:right">Time</span>
+    </div>
+
+    <div id="tracklist"></div>
+  </section>
+
+  <section class="discography-section">
+    <div class="section-header">
+      <span class="section-label">Earlier Releases</span>
+      <div class="section-rule"></div>
+    </div>
+    <div class="disco-grid">
+      <div class="disco-item">
+        <div class="disco-art">EP</div>
+        <div class="disco-name">Amanzi EP</div>
+        <div class="disco-meta">2024 · 4 tracks</div>
+      </div>
+      <div class="disco-item">
+        <div class="disco-art">Single</div>
+        <div class="disco-name">Thula</div>
+        <div class="disco-meta">2024 · Radio Edit + Club Mix</div>
+      </div>
+      <div class="disco-item">
+        <div class="disco-art">Single</div>
+        <div class="disco-name">Deep Water</div>
+        <div class="disco-meta">2023 · feat. Langa Sol</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-logo">Xhantilomzi</div>
+    <div class="footer-copy">© 2025 Xhantilomzi · All rights reserved</div>
+  </footer>
+</div>
+
+<!-- =================== ABOUT =================== -->
+<div id="about" class="page">
+  <section style="padding: 0 3rem 1rem; padding-top: 8rem;">
+    <p class="page-eyebrow">Artist</p>
+    <h1 class="page-title">Xhantilomzi</h1>
+    <p class="page-sub" style="margin-bottom:0">Voice of the home · Voice of the people</p>
+  </section>
+
+  <section class="about-hero">
+    <div class="about-text-block">
+      <div class="bio-long">
+        <p>Zuri Dlamini was ten years old when she started classical piano lessons in Soweto. By her teens, she'd found Amapiano — and something clicked that no lesson could have taught her. She named herself Xhantilomzi, isiXhosa for "voice of the home." It's less a stage name than a promise.</p>
+        <p>Her debut album Umoya Wami ("My Spirit") is the record that promise leads to. Ten tracks and an interlude, moving through love, grief, gratitude, and the particular electricity of a night that refuses to end. She sings in four South African languages — isiZulu, isiXhosa, Tshivenda, Xitsonga — and slips between them mid-song, using language the way other artists use melody: to get somewhere words alone can't reach.</p>
+        <p>She writes her own songs. She produces. She performs with a live band — keys, bass, two percussionists, and her longtime collaborator DJ/producer Nkosi Moyo — and her shows have been known to stretch a single song past twelve minutes when the room asks for it.</p>
+        <p>Umoya Wami was recorded at Soweto Sound Studio, mixed in Cape Town, and mastered in London. It sounds like all three at once.</p>
+      </div>
+    </div>
+    <div class="about-sidebar">
+      <div class="sidebar-block">
+        <div class="sidebar-label">Origins</div>
+        <div class="sidebar-value">Soweto, Johannesburg<br>South Africa · Born 1998</div>
+      </div>
+      <div class="sidebar-block">
+        <div class="sidebar-label">Languages</div>
+        <div class="sidebar-value">isiZulu · isiXhosa<br>Tshivenda · Xitsonga · English</div>
+      </div>
+      <div class="sidebar-block">
+        <div class="sidebar-label">Genres</div>
+        <div class="sidebar-value">Amapiano · Afro House<br>Deep House · Neo Soul · Afro R&amp;B</div>
+      </div>
+      <div class="sidebar-block">
+        <div class="sidebar-label">Influences</div>
+        <div class="influences-list">
+          <span class="influence-tag">DBN Gogo</span>
+          <span class="influence-tag">Msaki</span>
+          <span class="influence-tag">Sade</span>
+          <span class="influence-tag">Azana</span>
+          <span class="influence-tag">Sho Madjozi</span>
+          <span class="influence-tag">Solange</span>
+          <span class="influence-tag">Uncle Waffles</span>
+          <span class="influence-tag">Erykah Badu</span>
+        </div>
+      </div>
+      <div class="sidebar-block">
+        <div class="sidebar-label">Live Shows</div>
+        <div class="shows-list">
+          <div class="show-item"><div class="show-dot"></div>Bassline Joburg</div>
+          <div class="show-item"><div class="show-dot"></div>Afronation Portugal</div>
+          <div class="show-item"><div class="show-dot"></div>Club Favela Miami</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sound-section">
+    <div class="section-header">
+      <span class="section-label">The Sound</span>
+      <div class="section-rule"></div>
+    </div>
+    <div class="sound-grid">
+      <div class="sound-cell">
+        <div class="sound-genre">Amapiano</div>
+        <div class="sound-desc">The core. Log drums, deep bass, jazzy piano. The heartbeat of everything.</div>
+      </div>
+      <div class="sound-cell">
+        <div class="sound-genre">Afro House</div>
+        <div class="sound-desc">Driving, soulful, dancefloor-first. Where discipline meets abandon.</div>
+      </div>
+      <div class="sound-cell">
+        <div class="sound-genre">Neo Soul</div>
+        <div class="sound-desc">Warm, intimate, confessional. For the ballads and the 3am songs.</div>
+      </div>
+      <div class="sound-cell">
+        <div class="sound-genre">Deep House</div>
+        <div class="sound-desc">Slow grooves, heavy bass, hypnotic mood. The night shift.</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-logo">Xhantilomzi</div>
+    <div class="footer-copy">© 2025 Xhantilomzi · All rights reserved</div>
+  </footer>
+</div>
+
+<!-- =================== CONTACT =================== -->
+<div id="contact" class="page">
+  <section style="padding: 0 3rem 1rem; padding-top: 8rem;">
+    <p class="page-eyebrow">Get in Touch</p>
+    <h1 class="page-title">Contact</h1>
+  </section>
+
+  <section class="contact-grid">
+    <div class="contact-left">
+      <h2>Let's build<br><em>something together.</em></h2>
+      <p>For booking, press enquiries, and collaborations — reach the team below. For interview requests, please allow a minimum of two weeks' lead time.</p>
+      <div class="contact-channels">
+        <div class="channel">
+          <div class="channel-label">Booking</div>
+          <div class="channel-value">booking@xhantilomzimusic.com</div>
+          <div class="channel-note">Live shows · Festivals · Events</div>
+        </div>
+        <div class="channel">
+          <div class="channel-label">Press & Media</div>
+          <div class="channel-value">press@xhantilomzimusic.com</div>
+          <div class="channel-note">Interviews · Features · Licensing · Stems</div>
+        </div>
+        <div class="channel">
+          <div class="channel-label">Management</div>
+          <div class="channel-value">Khanyi Mkhize</div>
+          <div class="channel-note">+27 82 000 0000</div>
+        </div>
+        <div class="channel">
+          <div class="channel-label">Social</div>
+          <div class="channel-value">@xhantilomzi</div>
+          <div class="channel-note">All platforms</div>
+        </div>
+      </div>
+      <div class="social-row">
+        <span class="social-link">Instagram</span>
+        <span class="social-link">TikTok</span>
+        <span class="social-link">Spotify</span>
+        <span class="social-link">YouTube</span>
+      </div>
+    </div>
+
+    <div class="contact-right">
+      <div class="press-kit-box">
+        <div class="pk-title">Press Kit</div>
+        <div class="pk-desc">Everything you need to cover Xhantilomzi and Umoya Wami — bio, credits, production notes, and full language glossary for all four South African languages on the album.</div>
+        <div class="pk-items">
+          <div class="pk-item"><div class="pk-check">✓</div>Artist bio (long + short form)</div>
+          <div class="pk-item"><div class="pk-check">✓</div>Album one-liner & sound description</div>
+          <div class="pk-item"><div class="pk-check">✓</div>Full production credits</div>
+          <div class="pk-item"><div class="pk-check">✓</div>Language glossary (Zulu · Xhosa · Venda · Xitsonga)</div>
+          <div class="pk-item"><div class="pk-check">✓</div>Press quotes</div>
+          <div class="pk-item"><div class="pk-check">✓</div>High res photos & album artwork (on request)</div>
+        </div>
+        <button class="btn-primary" style="width:100%">Request Press Kit</button>
+      </div>
+
+      <div style="padding: 1.5rem; border: 0.5px solid rgba(201,168,76,0.15); background: rgba(61,43,26,0.2);">
+        <div class="sidebar-label" style="margin-bottom:0.8rem">Live Capacity</div>
+        <div style="font-family: 'Cormorant Garamond', serif; font-size: 1rem; color: var(--smoke-light); line-height: 1.7;">Suitable for 500 to 50,000 capacity venues. Technical rider and stage plot available on request.</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-logo">Xhantilomzi</div>
+    <div class="footer-copy">© 2025 Xhantilomzi · All rights reserved · Soweto, Johannesburg</div>
+  </footer>
+</div>
+
+<!-- PLAYER BAR -->
+<div class="player-bar" id="playerBar">
+  <div class="player-track-info">
+    <div class="player-title" id="playerTitle">—</div>
+    <div class="player-sub" id="playerSub">Umoya Wami · Xhantilomzi</div>
+  </div>
+  <div class="player-controls">
+    <button class="skip-btn" onclick="skipTrack(-1)">&#9664;&#9664;</button>
+    <button class="play-btn" id="playBtn" onclick="togglePlay()">&#9654;</button>
+    <button class="skip-btn" onclick="skipTrack(1)">&#9654;&#9654;</button>
+  </div>
+  <div class="player-progress">
+    <div class="progress-bar" onclick="seekProgress(event)">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+    <div class="progress-times">
+      <span id="timeElapsed">0:00</span>
+      <span id="timeDuration">—</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  const tracks = [
+    { num:'01', name:'Vula', sub:'Open Up', lang:'Zulu / English', type:'Intro Anthem', dur:'5:24', secs:324 },
+    { num:'02', name:'Amanzi', sub:'Water', lang:'Zulu / English', type:'Lead Single', dur:'5:02', secs:302 },
+    { num:'03', name:'Ndiyakuthanda', sub:'I Love You', lang:'Xhosa / English', type:'Love Ballad', dur:'4:48', secs:288 },
+    { num:'04', name:'Smoke Signal', sub:'', lang:'English / Zulu', type:'Club Banger', dur:'5:38', secs:338 },
+    { num:'05', name:'Thula', sub:'Hush', lang:'Zulu / English', type:'Healing Midtempo', dur:'4:55', secs:295 },
+    { num:'05.5', name:'Umphefumlo', sub:'The Breath', lang:'Xhosa', type:'Interlude', dur:'1:12', secs:72 },
+    { num:'06', name:'Umsebenzi', sub:'The Work', lang:'Zulu / English', type:'Power Anthem', dur:'5:14', secs:314 },
+    { num:'07', name:'Ubusuku', sub:'The Night', lang:'Xhosa / English', type:'Dark Groove', dur:'5:50', secs:350 },
+    { num:'08', name:'Ngiyabonga', sub:'Thank You', lang:'Zulu / English', type:'Gratitude Groove', dur:'4:42', secs:282 },
+    { num:'09', name:'Deep Water', sub:'feat. Langa Sol', lang:'English / Zulu', type:'Collab Single', dur:'5:18', secs:318 },
+    { num:'10', name:'Back in the Days', sub:'', lang:'Zulu · Xhosa · Venda · Xitsonga', type:'Nostalgic Closer', dur:'5:20', secs:320 },
+  ];
+
+  let currentTrack = -1;
+  let playing = false;
+  let elapsed = 0;
+  let timer = null;
+
+  function buildTracklist() {
+    const container = document.getElementById('tracklist');
+    tracks.forEach((t, i) => {
+      const row = document.createElement('div');
+      row.className = 'track-row';
+      row.id = 'track-' + i;
+      row.onclick = () => playTrack(i);
+      row.innerHTML = `
+        <div class="track-num">${t.num}</div>
+        <div class="track-info">
+          <div class="track-name">${t.name}${t.sub ? ' <span style="color:var(--ash);font-size:0.85rem">(' + t.sub + ')</span>' : ''}</div>
+          <div class="track-lang">${t.lang}</div>
+        </div>
+        <div class="track-type">${t.type}</div>
+        <div class="track-duration">${t.dur}</div>
+      `;
+      container.appendChild(row);
+    });
+  }
+
+  function playTrack(i) {
+    if (currentTrack >= 0) {
+      document.getElementById('track-' + currentTrack)?.classList.remove('playing');
+    }
+    currentTrack = i;
+    playing = true;
+    elapsed = 0;
+    clearInterval(timer);
+
+    const t = tracks[i];
+    document.getElementById('playerTitle').textContent = t.name + (t.sub ? ' (' + t.sub + ')' : '');
+    document.getElementById('timeDuration').textContent = t.dur;
+    document.getElementById('playerBar').classList.add('visible');
+    document.getElementById('playBtn').innerHTML = '&#9646;&#9646;';
+    document.getElementById('track-' + i)?.classList.add('playing');
+    document.getElementById('progressFill').style.width = '0%';
+
+    timer = setInterval(() => {
+      elapsed++;
+      const pct = Math.min((elapsed / t.secs) * 100, 100);
+      document.getElementById('progressFill').style.width = pct + '%';
+      const m = Math.floor(elapsed / 60);
+      const s = elapsed % 60;
+      document.getElementById('timeElapsed').textContent = m + ':' + (s < 10 ? '0' : '') + s;
+      if (elapsed >= t.secs) {
+        clearInterval(timer);
+        skipTrack(1);
+      }
+    }, 1000);
+  }
+
+  function togglePlay() {
+    if (currentTrack < 0) { playTrack(0); return; }
+    playing = !playing;
+    if (playing) {
+      document.getElementById('playBtn').innerHTML = '&#9646;&#9646;';
+      timer = setInterval(() => {
+        elapsed++;
+        const t = tracks[currentTrack];
+        const pct = Math.min((elapsed / t.secs) * 100, 100);
+        document.getElementById('progressFill').style.width = pct + '%';
+        const m = Math.floor(elapsed / 60);
+        const s = elapsed % 60;
+        document.getElementById('timeElapsed').textContent = m + ':' + (s < 10 ? '0' : '') + s;
+        if (elapsed >= t.secs) { clearInterval(timer); skipTrack(1); }
+      }, 1000);
+    } else {
+      document.getElementById('playBtn').innerHTML = '&#9654;';
+      clearInterval(timer);
+    }
+  }
+
+  function skipTrack(dir) {
+    const next = Math.max(0, Math.min(tracks.length - 1, currentTrack + dir));
+    if (next !== currentTrack) playTrack(next);
+  }
+
+  function seekProgress(e) {
+    if (currentTrack < 0) return;
+    const bar = e.currentTarget;
+    const pct = e.offsetX / bar.offsetWidth;
+    elapsed = Math.floor(pct * tracks[currentTrack].secs);
+    document.getElementById('progressFill').style.width = (pct * 100) + '%';
+  }
+
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.getElementById('nav-' + id).classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  buildTracklist();
+</script>
+</body>
+</html>
